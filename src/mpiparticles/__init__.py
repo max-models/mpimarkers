@@ -17,13 +17,18 @@ Example
 (0, 0)
 """
 
+from importlib.metadata import PackageNotFoundError, version
+
 from mpiparticles.collective import gather_columns, global_count
 from mpiparticles.decomposition import BoxDecomposition, Decomposition
 from mpiparticles.exchange import keep_owned, migrate
 from mpiparticles.ids import IdAllocator
 from mpiparticles.store import MarkerView, ParticleStore, StoreSnapshot
 
-__version__ = "0.1.0"
+try:
+    __version__ = version("mpiparticles")
+except PackageNotFoundError:  # not installed, e.g. run from a source tree
+    __version__ = "0.0.0+unknown"
 
 __all__ = [
     "BoxDecomposition",
