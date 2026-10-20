@@ -5,9 +5,9 @@ requires = [ "setuptools", "wheel" ]
 [project]
 name = "mpimarkers"
 version = "0.1.0"
-description = "Template python repository."
+description = "A distributed marker (particle) container for MPI codes: storage, ids, and migration to the owning rank."
 readme = "README.md"
-keywords = [ "python" ]
+keywords = [ "cupy", "markers", "mpi", "numpy", "particles", "particle-in-cell" ]
 license = { file = "LICENSE.txt" }
 authors = [ { name = "Max" } ]
 requires-python = ">=3.10"
@@ -20,7 +20,13 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
+# PyPI rejects direct references (git URLs), so the published requirements are version ranges; the
+# development environment (uv sync) takes cunumpy and mpiarray from their devel branches, see
+# [tool.uv.sources]
 dependencies = [
+  "cunumpy>=0.6.3",
+  "maybempi>=0.1.2",
+  "mpiarray>=0.2.1",
   "numpy",
 ]
 optional-dependencies.dev = [
@@ -29,7 +35,7 @@ optional-dependencies.dev = [
   "pyproject-fmt",
   "pyright",
   "ruff",
-  "mpimarkers[docs,test]",
+  "mpimarkers[docs,mpi,test]",
 ]
 optional-dependencies.docs = [
   "griffe",
@@ -38,9 +44,11 @@ optional-dependencies.docs = [
   "nbclient>=0.11",
   "nbformat>=5.11.1",
 ]
+# without mpi4py, mpimarkers runs serially on maybempi's stand-in for mpi4py.MPI;
+# the tests that launch mpiexec need it
+optional-dependencies.mpi = [ "mpi4py" ]
 optional-dependencies.test = [ "pytest", "pytest-cov" ]
 urls.Source = "https://github.com/max-models/mpimarkers"
-scripts.mpimarkers = "mpimarkers.main:main"
 
 [tool.setuptools]
 package-data."*" = [ "py.typed" ]
@@ -56,7 +64,7 @@ lint.ignore = [ "E501" ]  # line length is handled by the formatter
 lint.per-file-ignores."**/tests/**" = [ "D" ]
 lint.per-file-ignores."*.ipynb" = [ "D" ]
 lint.per-file-ignores."docs/tools/*" = [ "D" ]
-lint.pydocstyle.convention = "google"
+lint.pydocstyle.convention = "numpy"
 
 [tool.pyright]
 include = [ "src" ]
@@ -73,3 +81,7 @@ ini_options.addopts = "-ra"
 run.omit = [ "*/tests/*" ]
 run.source = [ "mpimarkers" ]
 report.show_missing = true
+
+[tool.uv.sources]
+cunumpy = { git = "https://github.com/max-models/cunumpy.git", branch = "devel" }
+mpiarray = { git = "https://github.com/max-models/mpiarray.git", branch = "devel" }
