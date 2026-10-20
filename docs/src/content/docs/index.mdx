@@ -1,9 +1,9 @@
 ---
 title: mpimarkers
-description: Template repository for Python projects.
+description: A distributed marker (particle) container for MPI codes.
 template: splash
 hero:
-  tagline: A starting point for a Python package with tests, CI, tutorials and an Astro documentation site.
+  tagline: Per-rank marker storage with stable ids, and migration of the markers that leave a rank to the rank that owns them.
   actions:
     - text: Get started
       link: /mpimarkers/getting-started/installation/
@@ -16,23 +16,20 @@ hero:
 
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-## What is included
+## What it does
 
 <CardGrid>
-	<Card title="Package layout" icon="open-book">
-		A `src/` layout with a console entry point, `pytest` tests and a `pyproject.toml` ready for PyPI.
+	<Card title="Particle store" icon="open-book">
+		Component-major positions, velocities, weights, alive flags and int64 ids on NumPy or CuPy, with growth, compaction, sorting and checkpoints.
 	</Card>
-	<Card title="Continuous integration" icon="rocket">
-		GitHub Actions for tests, static analysis, tutorial execution, documentation and PyPI publishing.
+	<Card title="Unique ids" icon="setting">
+		An id allocator with a rank stride gives every marker a globally unique int64 id that survives migration.
 	</Card>
-	<Card title="Tutorials" icon="document">
-		Jupyter notebooks in `tutorials/` are executed and published as pages of this site.
+	<Card title="Migration" icon="rocket">
+		Only the markers that left a rank are sent to their owner, with ids kept exact above 2^53. Serial runs make no MPI call.
 	</Card>
-	<Card title="Full examples" icon="document">
-		Complete Python scripts in `examples/` are shown with their plots.
-	</Card>
-	<Card title="API reference" icon="setting">
-		Every module, class and function is documented from the docstrings with starlight-pydocs.
+	<Card title="Your decomposition" icon="document">
+		A small protocol says which rank owns a position; a box decomposition is included as a reference.
 	</Card>
 </CardGrid>
 
@@ -40,7 +37,8 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 <CardGrid>
 	<LinkCard title="Installation" href="/mpimarkers/getting-started/installation/" description="Create an environment and install the package." />
-	<LinkCard title="Quickstart" href="/mpimarkers/getting-started/quickstart/" description="Run the command line entry point." />
+	<LinkCard title="Quickstart" href="/mpimarkers/getting-started/quickstart/" description="Store markers and migrate them between ranks." />
+	<LinkCard title="Guides" href="/mpimarkers/guides/" description="The store, the ids and the migration in detail." />
 	<LinkCard title="Tutorials" href="/mpimarkers/tutorials/" description="Executed notebooks with their outputs." />
 	<LinkCard title="Full examples" href="/mpimarkers/full-examples/" description="Complete scripts and their plots." />
 	<LinkCard title="API reference" href="/mpimarkers/api/mpimarkers/" description="Generated from the docstrings." />

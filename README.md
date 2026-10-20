@@ -11,26 +11,53 @@ analysis](https://github.com/max-models/mpimarkers/actions/workflows/static_anal
 [![PyPI](https://img.shields.io/pypi/v/mpimarkers.png)](https://pypi.org/project/mpimarkers/)
 [![Python](https://img.shields.io/pypi/pyversions/mpimarkers.png)](https://pypi.org/project/mpimarkers/)
 
-Template repository for Python projects: a `src/` package with a console
-entry point, `pytest` tests, GitHub Actions for tests, static analysis,
-tutorials, documentation and PyPI publishing, and an
-[Astro](https://astro.build/) +
-[Starlight](https://starlight.astro.build/) documentation site.
+A distributed marker (particle) container for MPI codes: per-rank
+storage in component-major arrays on NumPy or CuPy (through
+[cunumpy](https://github.com/max-models/cunumpy)), globally unique int64
+ids, and `migrate`, which sends the markers that left a rank to the rank
+that owns them. Without an MPI launcher it runs on one rank and makes no
+MPI call.
 
-Documentation: <https://max-models.github.io/mpimarkers/>
+``` python
+import cunumpy as xp
+import maybempi
 
-## Use the template
+from mpimarkers import (
+    BoxDecomposition,
+    IdAllocator,
+    ParticleStore,
+    global_count,
+    migrate,
+)
 
-Create a repository from this template, then rename the package:
+comm = maybempi.get_mpi().COMM_WORLD
+decomposition = BoxDecomposition(comm, [0.0, 0.0], [1.0, 1.0], proc_sizes=[1, 1])
+store = ParticleStore(ndim=2, nvel=3, id_allocator=IdAllocator.from_comm(comm))
 
-``` bash
-bash setup_project.sh my-app
-rm setup_project.sh
+store.add(xp.asarray([[0.2, 0.7], [0.4, 0.9]]), xp.zeros((3, 2)))
+store.positions[:, : store.length] += 0.1  # push
+sent, received = migrate(store, decomposition)  # collective: call it on every rank
+store.compact_if_needed()
+print(global_count(store, comm))
 ```
 
-This replaces `mpimarkers` with `my-app` everywhere, moves
-`src/app` to `src/my_app`, and points the entry point, tests and docs at
-it.
+``` bash
+mpiexec -n 4 python example.py   # with proc_sizes=[2, 2]; or just: python example.py
+```
+
+- **`ParticleStore`** holds positions `(ndim, n)`, velocities
+  `(nvel, n)`, weights, alive flags and ids, with growth by doubling,
+  dead markers until `compact`, `sort_by_key`, `snapshot`/`restore`, and
+  a transposed non-copy view for plasmacoll’s `MarkerSet`.
+- **`IdAllocator`** hands out int64 ids with a rank stride, independent
+  of the decomposition.
+- **`Decomposition`** is a protocol (`comm`, `rank`, `size`, `owners`,
+  `owned_mask`); `BoxDecomposition` is a small reference implementation.
+- **`migrate`** sends only the leavers, ids as int64 (exact above 2^53),
+  and appends the arrivals. `keep_owned`, `global_count` and
+  `gather_columns` are the companions.
+
+Documentation: <https://max-models.github.io/mpimarkers/>
 
 ## Install
 
@@ -38,27 +65,14 @@ With [uv](https://docs.astral.sh/uv/):
 
 ``` bash
 make install    # uv sync --extra dev, plus the pre-commit hooks
-uv run mpimarkers
 ```
 
-Or create and activate a Python environment (3.10 or newer):
+Or create and activate a Python environment (3.10 or newer) and install
+with pip:
 
 ``` bash
-python -m venv env
-source env/bin/activate
-pip install --upgrade pip
-```
-
-Install the code and requirements with pip:
-
-``` bash
-pip install -e .
-```
-
-Run the code with:
-
-``` bash
-mpimarkers
+pip install -e .          # serial
+pip install -e ".[mpi]"   # with mpi4py, for mpiexec runs
 ```
 
 The `test`, `docs` and `dev` extras install the test runner, the
@@ -76,7 +90,7 @@ checking [pyright](https://microsoft.github.io/pyright/), run by
 
 ``` bash
 make lint     # ruff check, ruff format --check, pyright
-make test     # pytest with coverage
+make test     # pytest with coverage; includes mpiexec -n 2 and -n 4 jobs when mpiexec is found
 ```
 
 Commit messages follow [Conventional
@@ -112,9 +126,10 @@ make readme
 ## Releases
 
 Before merging a release to `main`, update the version in
-`pyproject.toml`, `src/mpimarkers/__init__.py` and `CITATION.cff` (including
-its release date), and add the release notes to `CHANGELOG.md`. The push
-to `main` creates a GitHub release with a `vX.Y.Z` tag and publishes the
-package to PyPI with trusted publishing (OIDC). The one-time PyPI and
-GitHub configuration is described in the [publishing
+`pyproject.toml`, `src/mpimarkers/__init__.py` and `CITATION.cff`
+(including its release date), and add the release notes to
+`CHANGELOG.md`. The push to `main` creates a GitHub release with a
+`vX.Y.Z` tag and publishes the package to PyPI with trusted publishing
+(OIDC). The one-time PyPI and GitHub configuration is described in the
+[publishing
 tutorial](https://max-models.github.io/mpimarkers/development/publishing/).
