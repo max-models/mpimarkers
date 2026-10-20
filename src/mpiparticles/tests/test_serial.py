@@ -6,15 +6,15 @@ import cunumpy as xp
 import numpy as np
 import pytest
 
-import mpimarkers
-from mpimarkers import (
+import mpiparticles
+from mpiparticles import (
     BoxDecomposition,
     gather_columns,
     global_count,
     keep_owned,
     migrate,
 )
-from mpimarkers.tests.conftest import FakeComm, filled_store
+from mpiparticles.tests.conftest import FakeComm, filled_store
 
 
 class NoCommunication(FakeComm):
@@ -50,12 +50,12 @@ def test_keep_owned_drops_foreign_markers():
 
 
 def test_the_empty_store_is_fine():
-    store = mpimarkers.ParticleStore(2, 2)
+    store = mpiparticles.ParticleStore(2, 2)
     deco = BoxDecomposition(FakeComm(0, 2), [0, 0], [1, 1], [2, 1])
     assert keep_owned(store, deco) == 0
 
 
 @pytest.mark.parametrize("module", ["ids", "store", "decomposition"])
 def test_doctests(module):
-    mod = __import__(f"mpimarkers.{module}", fromlist=["x"])
+    mod = __import__(f"mpiparticles.{module}", fromlist=["x"])
     assert doctest.testmod(mod, extraglobs={"xp": xp}).failed == 0

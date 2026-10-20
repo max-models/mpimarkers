@@ -2,8 +2,8 @@ import cunumpy as xp
 import numpy as np
 import pytest
 
-from mpimarkers import IdAllocator
-from mpimarkers.tests.conftest import FakeComm
+from mpiparticles import IdAllocator
+from mpiparticles.tests.conftest import FakeComm
 
 
 def test_unique_across_simulated_ranks():

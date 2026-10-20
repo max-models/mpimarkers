@@ -2,8 +2,8 @@ import cunumpy as xp
 import numpy as np
 import pytest
 
-from mpimarkers import IdAllocator, ParticleStore
-from mpimarkers.tests.conftest import filled_store
+from mpiparticles import IdAllocator, ParticleStore
+from mpiparticles.tests.conftest import filled_store
 
 
 def host(array):

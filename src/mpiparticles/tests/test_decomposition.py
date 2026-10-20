@@ -2,8 +2,8 @@ import cunumpy as xp
 import numpy as np
 import pytest
 
-from mpimarkers import BoxDecomposition, Decomposition
-from mpimarkers.tests.conftest import FakeComm
+from mpiparticles import BoxDecomposition, Decomposition
+from mpiparticles.tests.conftest import FakeComm
 
 
 def host(array):

@@ -8,7 +8,7 @@ import cunumpy as xp
 import maybempi
 import numpy as np
 
-from mpimarkers.store import ParticleStore
+from mpiparticles.store import ParticleStore
 
 
 def global_count(store: ParticleStore, comm: Any = None) -> int:

@@ -2174,7 +2174,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mpimarkers"
+name = "mpiparticles"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
@@ -2231,7 +2231,7 @@ requires-dist = [
     { name = "maybempi", specifier = ">=0.1.2" },
     { name = "mpi4py", marker = "extra == 'mpi'" },
     { name = "mpiarray", git = "https://github.com/max-models/mpiarray.git?branch=devel" },
-    { name = "mpimarkers", extras = ["docs", "mpi", "test"], marker = "extra == 'dev'" },
+    { name = "mpiparticles", extras = ["docs", "mpi", "test"], marker = "extra == 'dev'" },
     { name = "nbclient", marker = "extra == 'docs'", specifier = ">=0.11" },
     { name = "nbformat", marker = "extra == 'docs'", specifier = ">=5.11.1" },
     { name = "numpy" },

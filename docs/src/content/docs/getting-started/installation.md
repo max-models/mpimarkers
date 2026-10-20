@@ -1,9 +1,9 @@
 ---
 title: Installation
-description: Create a Python environment and install mpimarkers.
+description: Create a Python environment and install mpiparticles.
 ---
 
-mpimarkers needs Python 3.10 or newer. Create and activate an environment:
+mpiparticles needs Python 3.10 or newer. Create and activate an environment:
 
 ```bash
 python -m venv env
@@ -17,7 +17,7 @@ Install the package and its requirements (`numpy`, `cunumpy`, `maybempi` and `mp
 pip install -e .
 ```
 
-Without an MPI launcher, mpimarkers runs on one rank with [maybempi](https://github.com/max-models/maybempi)'s
+Without an MPI launcher, mpiparticles runs on one rank with [maybempi](https://github.com/max-models/maybempi)'s
 stand-in for `mpi4py`, and makes no MPI call. For several ranks install an MPI library and `mpi4py`, and
 start the program with `mpiexec`:
 

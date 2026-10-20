@@ -9,12 +9,12 @@ import cunumpy as xp
 import maybempi
 import numpy as np
 
-from mpimarkers._types import Array
+from mpiparticles._types import Array
 
 
 @runtime_checkable
 class Decomposition(Protocol):
-    """Splits space between ranks; what :func:`~mpimarkers.migrate` needs.
+    """Splits space between ranks; what :func:`~mpiparticles.migrate` needs.
 
     Positions are component-major, ``(ndim, n)`` like the store's, and arrays
     live on the store's backend (NumPy or CuPy). Both methods must follow the

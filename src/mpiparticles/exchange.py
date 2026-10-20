@@ -5,9 +5,9 @@ from __future__ import annotations
 import cunumpy as xp
 import mpiarray as mpa
 
-from mpimarkers._types import Array
-from mpimarkers.decomposition import Decomposition
-from mpimarkers.store import ParticleStore
+from mpiparticles._types import Array
+from mpiparticles.decomposition import Decomposition
+from mpiparticles.store import ParticleStore
 
 
 def _leavers(store: ParticleStore, decomposition: Decomposition) -> Array:

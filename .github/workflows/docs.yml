@@ -31,7 +31,7 @@ jobs:
         tutorials/moving-markers/index.html
         full-examples/index.html
         full-examples/owner-map/index.html
-        api/mpimarkers/index.html
-        api/mpimarkers/store/index.html
+        api/mpiparticles/index.html
+        api/mpiparticles/store/index.html
         tutorials/moving-markers/moving_markers.ipynb
         full-examples/owner-map/plot-1.png

@@ -62,7 +62,7 @@ store.restore(snapshot)
 ## The MarkerSet view
 
 `store.as_marker_set()` returns a marker-major view that satisfies
-[plasmacoll](https://github.com/max-models/plasmacoll)'s `MarkerSet` protocol (mpimarkers does not import
+[plasmacoll](https://github.com/max-models/plasmacoll)'s `MarkerSet` protocol (mpiparticles does not import
 plasmacoll): `positions` is `(N, ndim)`, `velocities` `(N, nvel)`, `weights` `(N,)`, all transposed views
 of the storage, not copies. Updates such as the velocity changes of a collision land in the store.
 `remove(mask)` and `add(positions, velocities, weights)` work on the store. The view needs a
