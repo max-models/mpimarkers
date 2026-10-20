@@ -1,15 +1,15 @@
-# mpimarkers
+# mpiparticles
 
 
 <!-- README.md is generated from README.qmd: edit the .qmd and run `make readme`. -->
 
-[![Tests](https://github.com/max-models/mpimarkers/actions/workflows/test_pytest.yml/badge.svg)](https://github.com/max-models/mpimarkers/actions/workflows/test_pytest.yml)
+[![Tests](https://github.com/max-models/mpiparticles/actions/workflows/test_pytest.yml/badge.svg)](https://github.com/max-models/mpiparticles/actions/workflows/test_pytest.yml)
 [![Static
-analysis](https://github.com/max-models/mpimarkers/actions/workflows/static_analysis.yml/badge.svg)](https://github.com/max-models/mpimarkers/actions/workflows/static_analysis.yml)
-[![Docs](https://github.com/max-models/mpimarkers/actions/workflows/docs.yml/badge.svg)](https://max-models.github.io/mpimarkers/)
-[![codecov](https://codecov.io/gh/max-models/mpimarkers/branch/main/graph/badge.svg)](https://codecov.io/gh/max-models/mpimarkers)
-[![PyPI](https://img.shields.io/pypi/v/mpimarkers.png)](https://pypi.org/project/mpimarkers/)
-[![Python](https://img.shields.io/pypi/pyversions/mpimarkers.png)](https://pypi.org/project/mpimarkers/)
+analysis](https://github.com/max-models/mpiparticles/actions/workflows/static_analysis.yml/badge.svg)](https://github.com/max-models/mpiparticles/actions/workflows/static_analysis.yml)
+[![Docs](https://github.com/max-models/mpiparticles/actions/workflows/docs.yml/badge.svg)](https://max-models.github.io/mpiparticles/)
+[![codecov](https://codecov.io/gh/max-models/mpiparticles/branch/main/graph/badge.svg)](https://codecov.io/gh/max-models/mpiparticles)
+[![PyPI](https://img.shields.io/pypi/v/mpiparticles.png)](https://pypi.org/project/mpiparticles/)
+[![Python](https://img.shields.io/pypi/pyversions/mpiparticles.png)](https://pypi.org/project/mpiparticles/)
 
 A distributed marker (particle) container for MPI codes: per-rank
 storage in component-major arrays on NumPy or CuPy (through
@@ -22,7 +22,7 @@ MPI call.
 import cunumpy as xp
 import maybempi
 
-from mpimarkers import (
+from mpiparticles import (
     BoxDecomposition,
     IdAllocator,
     ParticleStore,
@@ -57,7 +57,7 @@ mpiexec -n 4 python example.py   # with proc_sizes=[2, 2]; or just: python examp
   and appends the arrivals. `keep_owned`, `global_count` and
   `gather_columns` are the companions.
 
-Documentation: <https://max-models.github.io/mpimarkers/>
+Documentation: <https://max-models.github.io/mpiparticles/>
 
 ## Install
 
@@ -110,7 +110,7 @@ Node 22 or newer.
 make docs-install     # npm packages and the Python docs extra
 make docs-notebooks   # execute tutorials/*.ipynb and convert them to pages
 make docs-examples    # run examples/*.py and publish their plots
-make docs-dev         # live preview at http://localhost:4321/mpimarkers/
+make docs-dev         # live preview at http://localhost:4321/mpiparticles/
 make docs-build       # the static site in docs/dist
 ```
 
@@ -126,10 +126,10 @@ make readme
 ## Releases
 
 Before merging a release to `main`, update the version in
-`pyproject.toml`, `src/mpimarkers/__init__.py` and `CITATION.cff`
+`pyproject.toml`, `src/mpiparticles/__init__.py` and `CITATION.cff`
 (including its release date), and add the release notes to
 `CHANGELOG.md`. The push to `main` creates a GitHub release with a
 `vX.Y.Z` tag and publishes the package to PyPI with trusted publishing
 (OIDC). The one-time PyPI and GitHub configuration is described in the
 [publishing
-tutorial](https://max-models.github.io/mpimarkers/development/publishing/).
+tutorial](https://max-models.github.io/mpiparticles/development/publishing/).

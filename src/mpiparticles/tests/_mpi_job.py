@@ -13,8 +13,8 @@ import mpiarray
 import numpy as np
 from mpi4py import MPI
 
-import mpimarkers
-from mpimarkers import (
+import mpiparticles
+from mpiparticles import (
     BoxDecomposition,
     IdAllocator,
     ParticleStore,
@@ -79,7 +79,7 @@ def check_state(store, deco, expected_ids):
 def main() -> None:
     big = "big" in sys.argv[1:]
     deco = BoxDecomposition(COMM, [0.0, 0.0], [1.0, 1.0], PROC_SIZES)
-    assert isinstance(deco, mpimarkers.Decomposition)
+    assert isinstance(deco, mpiparticles.Decomposition)
     store = make_store(deco, big)
     ids_before = set(gather_columns(store.active_ids(), COMM, root=None).tolist())
     assert len(ids_before) == (SIZE - 1) * NMARKERS
@@ -147,7 +147,7 @@ def main() -> None:
     shared = ParticleStore(2, 3, id_allocator=IdAllocator(RANK, SIZE))
     points = np.random.default_rng(7).uniform(0.0, 1.0, size=(2, 500))
     shared.add(xp.asarray(points), xp.zeros((3, 500)))
-    mpimarkers.keep_owned(shared, deco)
+    mpiparticles.keep_owned(shared, deco)
     assert global_count(shared, COMM) == 500
 
     if RANK == 0:

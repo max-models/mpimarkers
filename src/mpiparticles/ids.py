@@ -6,7 +6,7 @@ from typing import Any
 
 import cunumpy as xp
 
-from mpimarkers._types import Array
+from mpiparticles._types import Array
 
 
 class IdAllocator:

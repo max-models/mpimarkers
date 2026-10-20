@@ -1,20 +1,20 @@
 // @ts-check
 // The shared max-models docs setup (@max-models/starlight-theme): served at
-// https://max-models.github.io/mpimarkers/, with math, the API reference and a link check.
+// https://max-models.github.io/mpiparticles/, with math, the API reference and a link check.
 import { defineDocs } from '@max-models/starlight-theme';
 
 export default defineDocs({
-	repo: 'mpimarkers',
-	title: 'mpimarkers',
+	repo: 'mpiparticles',
+	title: 'mpiparticles',
 	description: 'A distributed marker (particle) container for MPI codes.',
-	pythonPackage: 'mpimarkers',
+	pythonPackage: 'mpiparticles',
 	nav: [
 		{ label: 'Getting started', link: '/getting-started/installation/' },
 		{ label: 'Guides', link: '/guides/' },
 		{ label: 'Tutorials', link: '/tutorials/' },
 		{ label: 'Full examples', link: '/full-examples/' },
 		{ label: 'Development', link: '/development/docs/' },
-		{ label: 'API', link: '/api/mpimarkers/' },
+		{ label: 'API', link: '/api/mpiparticles/' },
 	],
 	sidebar: [
 		{

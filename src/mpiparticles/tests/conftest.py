@@ -5,7 +5,7 @@ from __future__ import annotations
 import cunumpy as xp
 import pytest
 
-from mpimarkers import ParticleStore
+from mpiparticles import ParticleStore
 
 
 class FakeComm:

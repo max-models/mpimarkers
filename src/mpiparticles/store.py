@@ -7,8 +7,8 @@ from typing import Any
 
 import cunumpy as xp
 
-from mpimarkers._types import Array
-from mpimarkers.ids import IdAllocator
+from mpiparticles._types import Array
+from mpiparticles.ids import IdAllocator
 
 
 def _columns(array: Array, index: Array) -> Array:

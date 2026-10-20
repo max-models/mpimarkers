@@ -9,7 +9,7 @@ import cunumpy as xp
 import matplotlib.pyplot as plt
 import numpy as np
 
-from mpimarkers import BoxDecomposition
+from mpiparticles import BoxDecomposition
 
 
 class Rank:

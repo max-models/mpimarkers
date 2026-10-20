@@ -9,7 +9,7 @@ launcher everything runs serially, with no MPI calls.
 Example
 -------
 >>> import cunumpy as xp
->>> from mpimarkers import BoxDecomposition, ParticleStore, migrate
+>>> from mpiparticles import BoxDecomposition, ParticleStore, migrate
 >>> store = ParticleStore(ndim=1, nvel=3)
 >>> _ = store.add(xp.asarray([[0.25, 0.75]]), xp.zeros((3, 2)))
 >>> deco = BoxDecomposition(None, [0.0], [1.0], [1])
@@ -17,11 +17,11 @@ Example
 (0, 0)
 """
 
-from mpimarkers.collective import gather_columns, global_count
-from mpimarkers.decomposition import BoxDecomposition, Decomposition
-from mpimarkers.exchange import keep_owned, migrate
-from mpimarkers.ids import IdAllocator
-from mpimarkers.store import MarkerView, ParticleStore, StoreSnapshot
+from mpiparticles.collective import gather_columns, global_count
+from mpiparticles.decomposition import BoxDecomposition, Decomposition
+from mpiparticles.exchange import keep_owned, migrate
+from mpiparticles.ids import IdAllocator
+from mpiparticles.store import MarkerView, ParticleStore, StoreSnapshot
 
 __version__ = "0.1.0"
 

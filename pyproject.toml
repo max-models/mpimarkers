@@ -3,7 +3,7 @@ build-backend = "setuptools.build_meta"
 requires = [ "setuptools", "wheel" ]
 
 [project]
-name = "mpimarkers"
+name = "mpiparticles"
 version = "0.1.0"
 description = "A distributed marker (particle) container for MPI codes: storage, ids, and migration to the owning rank."
 readme = "README.md"
@@ -35,7 +35,7 @@ optional-dependencies.dev = [
   "pyproject-fmt",
   "pyright",
   "ruff",
-  "mpimarkers[docs,mpi,test]",
+  "mpiparticles[docs,mpi,test]",
 ]
 optional-dependencies.docs = [
   "griffe",
@@ -44,11 +44,11 @@ optional-dependencies.docs = [
   "nbclient>=0.11",
   "nbformat>=5.11.1",
 ]
-# without mpi4py, mpimarkers runs serially on maybempi's stand-in for mpi4py.MPI;
+# without mpi4py, mpiparticles runs serially on maybempi's stand-in for mpi4py.MPI;
 # the tests that launch mpiexec need it
 optional-dependencies.mpi = [ "mpi4py" ]
 optional-dependencies.test = [ "pytest", "pytest-cov" ]
-urls.Source = "https://github.com/max-models/mpimarkers"
+urls.Source = "https://github.com/max-models/mpiparticles"
 
 [tool.setuptools]
 package-data."*" = [ "py.typed" ]
@@ -79,7 +79,7 @@ ini_options.addopts = "-ra"
 
 [tool.coverage]
 run.omit = [ "*/tests/*" ]
-run.source = [ "mpimarkers" ]
+run.source = [ "mpiparticles" ]
 report.show_missing = true
 
 [tool.uv.sources]

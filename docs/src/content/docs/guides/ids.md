@@ -10,7 +10,7 @@ size)` gives rank `r` of `n` the ids `r, r + n, r + 2n, ...`, so ids are unique 
 communication.
 
 ```python
-from mpimarkers import IdAllocator, ParticleStore
+from mpiparticles import IdAllocator, ParticleStore
 
 store = ParticleStore(2, 3, id_allocator=IdAllocator(rank=1, size=4))
 ```
