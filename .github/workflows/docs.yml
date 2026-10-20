@@ -28,10 +28,10 @@ jobs:
       smoke-paths: |
         getting-started/installation/index.html
         tutorials/index.html
-        tutorials/example-tutorial/index.html
+        tutorials/moving-markers/index.html
         full-examples/index.html
-        full-examples/sine-wave/index.html
-        api/app/index.html
-        api/app/main/index.html
-        tutorials/example-tutorial/example_tutorial.ipynb
-        full-examples/sine-wave/plot-1.png
+        full-examples/owner-map/index.html
+        api/mpimarkers/index.html
+        api/mpimarkers/store/index.html
+        tutorials/moving-markers/moving_markers.ipynb
+        full-examples/owner-map/plot-1.png
