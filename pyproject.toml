@@ -21,13 +21,14 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
 ]
 # PyPI rejects direct references (git URLs), so the published requirements are version ranges; the
-# development environment (uv sync) takes cunumpy and mpiarray from their devel branches, see
-# [tool.uv.sources]
+# development environment (uv sync) takes cunumpy, mpiarray and scope-profiler from their devel
+# branches, see [tool.uv.sources]
 dependencies = [
   "cunumpy>=0.6.3",
   "maybempi>=0.1.2",
   "mpiarray>=0.2.1",
   "numpy",
+  "scope-profiler>=0.7.5",
 ]
 optional-dependencies.dev = [
   "jupyterlab",
@@ -85,3 +86,4 @@ report.show_missing = true
 [tool.uv.sources]
 cunumpy = { git = "https://github.com/max-models/cunumpy.git", branch = "devel" }
 mpiarray = { git = "https://github.com/max-models/mpiarray.git", branch = "devel" }
+scope-profiler = { git = "https://github.com/max-models/scope-profiler", branch = "devel" }

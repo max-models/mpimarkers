@@ -6,6 +6,10 @@ arrays (CPU or GPU through ``cunumpy``) with stable int64 ids; a
 moves the markers that left a rank's subdomain to their owners. Without an MPI
 launcher everything runs serially, with no MPI calls.
 
+The expensive operations are scope-profiler regions named ``mpiparticles.<operation>``,
+tagged ``"mpiparticles"`` and off by default; enable them with
+``scope_profiler.setup(enable_tags=["mpiparticles"])``.
+
 Example
 -------
 >>> import cunumpy as xp
@@ -19,11 +23,17 @@ Example
 
 from importlib.metadata import PackageNotFoundError, version
 
+import scope_profiler as sp
+
+from mpiparticles._profiling import PROFILE_TAGS
 from mpiparticles.collective import gather_columns, global_count
 from mpiparticles.decomposition import BoxDecomposition, Decomposition
 from mpiparticles.exchange import keep_owned, migrate
 from mpiparticles.ids import IdAllocator
 from mpiparticles.store import MarkerView, ParticleStore, StoreSnapshot
+
+# The profiling regions are off unless the application enables the tag.
+sp.register_opt_in_tag(*PROFILE_TAGS)
 
 try:
     __version__ = version("mpiparticles")
