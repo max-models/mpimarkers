@@ -20,9 +20,8 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-# PyPI rejects direct references (git URLs), so the published requirements are version ranges; the
-# development environment (uv sync) takes cunumpy, mpiarray and scope-profiler from their devel
-# branches, see [tool.uv.sources]
+# only version ranges: PyPI rejects direct references (git URLs); devel takes the max-models
+# packages from their devel branches, see [tool.uv.sources]
 dependencies = [
   "cunumpy>=0.6.3",
   "maybempi>=0.1.2",
@@ -83,7 +82,10 @@ run.omit = [ "*/tests/*" ]
 run.source = [ "mpiparticles" ]
 report.show_missing = true
 
+# PRs to devel test against the devel branches of the max-models packages (pinned in
+# uv.lock); PRs to main and the release use PyPI only (CI sets UV_NO_SOURCES).
 [tool.uv.sources]
-cunumpy = { git = "https://github.com/max-models/cunumpy.git", branch = "devel" }
-mpiarray = { git = "https://github.com/max-models/mpiarray.git", branch = "devel" }
+cunumpy = { git = "https://github.com/max-models/cunumpy", branch = "devel" }
+maybempi = { git = "https://github.com/max-models/maybempi", branch = "devel" }
+mpiarray = { git = "https://github.com/max-models/mpiarray", branch = "devel" }
 scope-profiler = { git = "https://github.com/max-models/scope-profiler", branch = "devel" }
