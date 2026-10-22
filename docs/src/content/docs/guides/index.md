@@ -10,3 +10,5 @@ sidebar:
 - [Ids](/mpiparticles/guides/ids/): globally unique int64 ids with a rank stride.
 - [Decomposition and migration](/mpiparticles/guides/migration/): the `Decomposition` protocol,
   `BoxDecomposition`, and what `migrate` sends.
+- [Profiling](/mpiparticles/guides/profiling/): the opt-in scope-profiler regions and how to turn
+  them on.

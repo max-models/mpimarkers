@@ -6,7 +6,9 @@ from dataclasses import dataclass
 from typing import Any
 
 import cunumpy as xp
+import scope_profiler as sp
 
+from mpiparticles._profiling import PROFILE_TAGS
 from mpiparticles._types import Array
 from mpiparticles.ids import IdAllocator
 
@@ -202,14 +204,27 @@ class ParticleStore:
         capacity = self.capacity
         if n <= capacity:
             return
-        while capacity < n:
-            capacity *= 2
-        old = (self._positions, self._velocities, self._weights, self._alive, self._ids)
-        self._allocate(capacity)
-        end = self._length
-        new = (self._positions, self._velocities, self._weights, self._alive, self._ids)
-        for target, source in zip(new, old, strict=True):
-            target[..., :end] = source[..., :end]
+        with sp.region("mpiparticles.reserve", tags=PROFILE_TAGS):
+            while capacity < n:
+                capacity *= 2
+            old = (
+                self._positions,
+                self._velocities,
+                self._weights,
+                self._alive,
+                self._ids,
+            )
+            self._allocate(capacity)
+            end = self._length
+            new = (
+                self._positions,
+                self._velocities,
+                self._weights,
+                self._alive,
+                self._ids,
+            )
+            for target, source in zip(new, old, strict=True):
+                target[..., :end] = source[..., :end]
 
     # -- adding and removing --------------------------------------------------
 
@@ -322,6 +337,7 @@ class ParticleStore:
         self._clear_rows(count, self._length)
         self._length = count
 
+    @sp.profile("mpiparticles.compact", tags=PROFILE_TAGS)
     def compact(self) -> None:
         """Move the alive markers to the front, in order, and drop the dead ones."""
         end = self._length
@@ -362,18 +378,19 @@ class ParticleStore:
         keys = xp.asarray(keys)
         if keys.shape != (end,):
             raise ValueError(f"keys must have shape ({end},), got {keys.shape}")
-        rows = xp.nonzero(self._alive[:end])[0]
-        count = int(rows.size)
-        if count:
-            _, order = xp.algorithms.sort_by_key(keys[rows])
-            rows = rows[order]
-            # one contiguous row at a time: faster than a 2-D column gather
-            for array in (self._positions, self._velocities):
-                for row in range(array.shape[0]):
-                    array[row, :count] = array[row][rows]
-            for array in (self._weights, self._ids):
-                array[:count] = array[rows]
-        self._keep_first(count)
+        with sp.region("mpiparticles.sort_by_key", tags=PROFILE_TAGS):
+            rows = xp.nonzero(self._alive[:end])[0]
+            count = int(rows.size)
+            if count:
+                _, order = xp.algorithms.sort_by_key(keys[rows])
+                rows = rows[order]
+                # one contiguous row at a time: faster than a 2-D column gather
+                for array in (self._positions, self._velocities):
+                    for row in range(array.shape[0]):
+                        array[row, :count] = array[row][rows]
+                for array in (self._weights, self._ids):
+                    array[:count] = array[rows]
+            self._keep_first(count)
 
     # -- alive markers --------------------------------------------------------
 
@@ -409,6 +426,7 @@ class ParticleStore:
 
     # -- checkpointing --------------------------------------------------------
 
+    @sp.profile("mpiparticles.snapshot", tags=PROFILE_TAGS)
     def snapshot(self) -> StoreSnapshot:
         """Return a copy of all markers (alive and dead) and the id counter."""
         end = self._length
@@ -433,16 +451,17 @@ class ParticleStore:
                 f"snapshot is for ndim={snapshot.ndim}, nvel={snapshot.nvel}, "
                 f"this store has ndim={self._ndim}, nvel={self._nvel}"
             )
-        end = snapshot.length
-        self.reserve(end)
-        self._clear_rows(0, self._length)
-        self._positions[:, :end] = snapshot.positions
-        self._velocities[:, :end] = snapshot.velocities
-        self._weights[:end] = snapshot.weights
-        self._alive[:end] = snapshot.alive
-        self._ids[:end] = snapshot.ids
-        self._length = end
-        self._allocator.next_id = snapshot.next_id
+        with sp.region("mpiparticles.restore", tags=PROFILE_TAGS):
+            end = snapshot.length
+            self.reserve(end)
+            self._clear_rows(0, self._length)
+            self._positions[:, :end] = snapshot.positions
+            self._velocities[:, :end] = snapshot.velocities
+            self._weights[:end] = snapshot.weights
+            self._alive[:end] = snapshot.alive
+            self._ids[:end] = snapshot.ids
+            self._length = end
+            self._allocator.next_id = snapshot.next_id
 
     # -- plasmacoll's MarkerSet -----------------------------------------------
 

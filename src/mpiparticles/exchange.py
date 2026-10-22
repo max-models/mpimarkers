@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import cunumpy as xp
 import mpiarray as mpa
+import scope_profiler as sp
 
+from mpiparticles._profiling import PROFILE_TAGS
 from mpiparticles._types import Array
 from mpiparticles.decomposition import Decomposition
 from mpiparticles.store import ParticleStore
@@ -19,6 +21,7 @@ def _leavers(store: ParticleStore, decomposition: Decomposition) -> Array:
     return xp.nonzero(store.alive[:end] & ~owned)[0]
 
 
+@sp.profile("mpiparticles.migrate", tags=PROFILE_TAGS)
 def migrate(store: ParticleStore, decomposition: Decomposition) -> tuple[int, int]:
     """Send the markers that left this rank's subdomain to their owners.
 
@@ -89,6 +92,7 @@ def migrate(store: ParticleStore, decomposition: Decomposition) -> tuple[int, in
     return count, received
 
 
+@sp.profile("mpiparticles.keep_owned", tags=PROFILE_TAGS)
 def keep_owned(store: ParticleStore, decomposition: Decomposition) -> int:
     """Drop the markers this rank does not own (not collective).
 

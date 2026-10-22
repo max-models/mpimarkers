@@ -7,7 +7,9 @@ from typing import Any
 import cunumpy as xp
 import maybempi
 import numpy as np
+import scope_profiler as sp
 
+from mpiparticles._profiling import PROFILE_TAGS
 from mpiparticles.store import ParticleStore
 
 
@@ -23,6 +25,7 @@ def global_count(store: ParticleStore, comm: Any = None) -> int:
     return int(comm.allreduce(count, op=maybempi.get_mpi().SUM))
 
 
+@sp.profile("mpiparticles.gather_columns", tags=PROFILE_TAGS)
 def gather_columns(array: Any, comm: Any = None, root: int | None = 0) -> Any:
     """Concatenate component-major ``(ncomp, n)`` or ``(n,)`` arrays over the ranks.
 

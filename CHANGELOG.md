@@ -17,6 +17,10 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `gather_columns`.
 - Tests that launch `mpiexec -n 2` and `-n 4` jobs, a tutorial ("Moving markers between ranks"),
   guides and an example.
+- Opt-in scope-profiler regions (`mpiparticles.migrate`, `mpiparticles.compact`, ...) tagged
+  `"mpiparticles"`: off unless the application enables the tag, for example with
+  `scope_profiler.setup(enable_tags=["mpiparticles"])`. scope-profiler (>= 0.7.5) is a new
+  dependency.
 
 ### Changed
 
