@@ -139,6 +139,48 @@ def test_sort_by_key_reorders_all_fields_and_drops_dead():
     assert host(store.velocities[1, :5]).tolist() == [-float(i) - 1 for i in order]
 
 
+def _reference_sort(store, keys):
+    """What sort_by_key must leave: the alive columns, stably ordered by key."""
+    alive = host(store.alive[: store.length])
+    order = np.flatnonzero(alive)[np.argsort(host(keys)[alive], kind="stable")]
+    return (
+        host(store.positions)[:, order],
+        host(store.velocities)[:, order],
+        host(store.weights)[order],
+        host(store.ids)[order],
+    )
+
+
+@pytest.mark.parametrize(
+    ("dtype", "dead_key"),
+    [
+        (np.int64, None),
+        (np.int32, None),
+        (np.uint16, None),
+        (np.int64, np.iinfo(np.int64).max),  # no key above it: compacts first
+        (np.uint8, np.iinfo(np.uint8).max),
+        (np.float64, None),  # not integers: compacts first
+    ],
+)
+@pytest.mark.parametrize("dead_fraction", [0.0, 0.3, 1.0])
+def test_sort_by_key_matches_a_stable_sort_of_the_alive(dtype, dead_key, dead_fraction):
+    rng = np.random.default_rng(1)
+    n = 50
+    store = filled_store(n, capacity=64)
+    store.deactivate(xp.asarray(rng.random(n) < dead_fraction))
+    keys = rng.integers(0, 6, n).astype(dtype)
+    if dead_key is not None:
+        keys[rng.integers(0, n, 5)] = dead_key  # the largest key, alive or dead
+    expected = _reference_sort(store, keys)
+    count = expected[2].size
+    store.sort_by_key(xp.asarray(keys))
+    assert (store.length, store.num_alive) == (count, count)
+    assert np.array_equal(host(store.positions[:, :count]), expected[0])
+    assert np.array_equal(host(store.velocities[:, :count]), expected[1])
+    assert np.array_equal(host(store.weights[:count]), expected[2])
+    assert np.array_equal(host(store.ids[:count]), expected[3])
+
+
 def test_sort_keeps_ids_exact_above_2_53():
     store = ParticleStore(1, 1)
     big = 2**62 + np.arange(4, dtype=np.int64) * 3 + 1
