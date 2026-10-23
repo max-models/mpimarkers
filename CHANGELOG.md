@@ -26,6 +26,9 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - `__version__` is read from the installed package metadata, not hardcoded.
 - Docstrings follow the NumPy convention.
+- `ParticleStore.sort_by_key` sorts and gathers with `xp.algorithms.sort_by_key(..., axis=-1)`
+  (cunumpy >= 0.7.1 gathers component-major arrays row by row) instead of its own row loop; the
+  dead markers sort last behind a key above every alive one.
 
 ### Removed
 

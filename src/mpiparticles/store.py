@@ -13,16 +13,13 @@ from mpiparticles._types import Array
 from mpiparticles.ids import IdAllocator
 
 
-def _columns(array: Array, index: Array) -> Array:
-    """Return the marker columns ``index`` (a mask or indices) of a ``(ncomp, N)`` array.
+def _columns(array: Array, mask: Array) -> Array:
+    """Return the marker columns where ``mask`` is True of a ``(ncomp, N)`` array.
 
-    ``array[:, index]`` comes back Fortran-ordered, which compiled kernels refuse;
-    ``compress`` and ``take`` give a C-contiguous copy.
+    ``array[:, mask]`` comes back Fortran-ordered, which compiled kernels refuse;
+    ``compress`` gives a C-contiguous copy.
     """
-    module = xp.get_array_module(array)
-    if index.dtype == bool:
-        return module.compress(index, array, axis=1)
-    return module.take(array, index, axis=1)
+    return xp.get_array_module(array).compress(mask, array, axis=1)
 
 
 @dataclass(frozen=True)
@@ -379,17 +376,28 @@ class ParticleStore:
         if keys.shape != (end,):
             raise ValueError(f"keys must have shape ({end},), got {keys.shape}")
         with sp.region("mpiparticles.sort_by_key", tags=PROFILE_TAGS):
-            rows = xp.nonzero(self._alive[:end])[0]
-            count = int(rows.size)
+            alive = self._alive[:end]
+            count = int(xp.count_nonzero(alive))
+            if 0 < count < end:
+                top = keys[alive].max()
+                if keys.dtype.kind in "iu" and top < xp.iinfo(keys.dtype).max:
+                    # the dead sort last, behind a key above every alive one
+                    keys = xp.where(alive, keys, top + 1)
+                else:
+                    keys = keys[alive]
+                    self.compact()
+                    end = count
             if count:
-                _, order = xp.algorithms.sort_by_key(keys[rows])
-                rows = rows[order]
-                # one contiguous row at a time: faster than a 2-D column gather
-                for array in (self._positions, self._velocities):
-                    for row in range(array.shape[0]):
-                        array[row, :count] = array[row][rows]
-                for array in (self._weights, self._ids):
-                    array[:count] = array[rows]
+                fields = (
+                    self._positions[:, :end],
+                    self._velocities[:, :end],
+                    self._weights[:end],
+                    self._ids[:end],
+                )
+                # component-major: cunumpy gathers the (ncomp, n) arrays row by row
+                _, _, *sorted_fields = xp.algorithms.sort_by_key(keys, *fields, axis=-1)
+                for field, values in zip(fields, sorted_fields, strict=True):
+                    field[..., :count] = values[..., :count]
             self._keep_first(count)
 
     # -- alive markers --------------------------------------------------------
